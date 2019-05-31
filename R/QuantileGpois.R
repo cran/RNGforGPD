@@ -24,9 +24,10 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
   # Check if parameters are valid
   if(theta <= 0) stop("Theta has to be greater than 0!")
   if(lambda > 1) stop("Lambda has to be less than 1!")
-  if(min(p) < 0 | max(p) > 1) stop("p must be between 0 and 1!")
+
   # since m >= 4, check lower bound for lambda when labda is negative
   if (lambda < 0 & lambda < (-theta)/4) stop (paste("For lambda<0, lambda must be >= -theta/4 = ", (-theta)/4, "!", sep=""))
+  
   # Determine m
   m = numeric(1)
   if (lambda < 0) {
@@ -39,6 +40,7 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
   s = numeric(10000)
   q = numeric(length(p.in))
   w = exp(-lambda)
+  
   #P(X = 0)
   p = exp(-theta)
   # s is for cumulative probability
@@ -63,6 +65,7 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
         i=i+1
      }
   }
+  
   # For lambda < 0 to eliminate the truncation error ###
   if (lambda < 0) {
     Fm = s[i]
@@ -70,17 +73,28 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
     if (details){
       cat("When lambda is negative, we need to account for truncation error\n")
       cat("The adjusted CDF are:", s[1:i])
-      cat("\n")
     }
   }
+  
   # quantile for x
-  for (j in 1:length(p.in)) {
+  if(!is.infinite(p)) {for (j in 1:length(p.in)) {
     i = 1
     while (p.in[j] > s[i]) {
       i = i + 1
     }
     q[j] = i - 1
   }
-  return(q)
+    return(q)
+  }
+  else {
+    for (j in 1:length(p.in)) {
+      i = 1
+      while (p.in[j] > s[i]) {
+        i = i + 1
+      }
+      q[j] = i - 1
+    }
+    return(q)
+  }
 }
 

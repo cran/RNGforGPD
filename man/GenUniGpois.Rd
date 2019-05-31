@@ -20,11 +20,11 @@ The default is set as TRUE.}
 \item{method}{index to specify one of the five methods: "Inversion", "Branching", "Normal-Approximation", "Build-Up" and "Chop-Down".}
 }
 \value{
-a list that includes generated data, specified and empirical vlaues of theta and lambda.
+a list that includes generated data, specified and empirical values of theta and lambda.
 }
 \description{
 \code{GenUniGpois} generates univariate random variables from the generalized Poisson
-distribution using one of the five methods including: Inversion, Branching, Normal-Approximation, Build-Up, Chop-Down.
+distribution using one of the five methods including Inversion, Branching, Normal-Approximation, Build-Up, Chop-Down.
 }
 \details{
 All five methods come from Demirtas (2017).

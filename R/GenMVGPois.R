@@ -23,7 +23,7 @@ NULL
 #'  length of the vector is at least two, and each value has to be a positive number.
 #' @param lambda.vec dispersion parameters in the generalized Poisson distribution. It is assumed that the length
 #'  of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.
-#' @param details index of whether to displays the specified and empirical values of parameters. Default is set to be TRUE.
+#' @param details index of whether to display the specified and empirical values of parameters. Default is set to be TRUE.
 #' @return data that follow multivariate generalized Poisson distribution.
 #' @examples
 #' \donttest{
@@ -40,19 +40,19 @@ NULL
 #'  cor(data) # empirical correlation matrix
 #'  TV # specified correlation matrix}
 #' @references
-#'  Demirtas, H. (2017). On accurate and precise generation of generalized
-#'  Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
-#'  \bold{46(1)}, 489-499.
-#'
-#'  Yahav, I. and Shmueli, G.(2012). On generating multivariate Poisson data in management science applications.
-#'  \emph{Applied Stochastic Models in Business and Industry}, \bold{28(1)}, 91-102.
-#'
 #'  Amatya, A. and Demirtas, H. (2015). Simultaneous generation of multivariate mixed data with Poisson
 #'  and normal marginals. \emph{Journal of Statistical Computation and Simulation}, \bold{85(15)}, 3129-3139.
 #'
 #'  Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with
 #'  Poisson and normal marginals. \emph{Communications in Statistics - Simulation and Computation},
 #'  \bold{46(3)}, 2241-2253.
+#'  
+#'  Demirtas, H. (2017). On accurate and precise generation of generalized
+#'  Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
+#'  \bold{46(1)}, 489-499.
+#'
+#'  Yahav, I. and Shmueli, G.(2012). On generating multivariate Poisson data in management science applications.
+#'  \emph{Applied Stochastic Models in Business and Industry}, \bold{28(1)}, 91-102.
 #' @export
 GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, details = TRUE) {
   if (sample.size == 1 & details == TRUE) {
@@ -68,16 +68,19 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
     stop("Dimension of cmat.star and number of variables do not match!\n")
   }
   XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
+  while (sum(pnorm(XX) > 0.99) != 0) {
+    XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
+  }
   YY = NULL
   for (i in 1:no.gpois) {
     UU = pnorm(XX[, i])
-    XXgpois = QuantileGpois(UU, theta.vec[i],lambda.vec[i])
+    XXgpois = QuantileGpois(UU, theta.vec[i],lambda.vec[i], FALSE)
     YY = cbind(YY, XXgpois)
   }
   colnames(YY) = NULL
   if (sample.size != 1) {
     model = vglm(YY ~ 1, genpoisson(zero = 1))
-    coef = matrix(Coef(model), 2, 3)
+    coef = matrix(Coef(model), 2, no.gpois)
     emp.theta = round(coef[2, ], 6)
     emp.lambda = round(coef[1, ], 6)
     emp.corr = cor(YY)

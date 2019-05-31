@@ -8,7 +8,7 @@ NULL
 #' Generates Univariate Generalized Poisson Variates
 #'
 #' \code{GenUniGpois} generates univariate random variables from the generalized Poisson
-#' distribution using one of the five methods including: Inversion, Branching, Normal-Approximation, Build-Up, Chop-Down.
+#' distribution using one of the five methods including Inversion, Branching, Normal-Approximation, Build-Up, Chop-Down.
 #'
 #' @param theta the rate parameter in the generalized Poisson distribution. It has to be a positive number.
 #' @param lambda the dispersion parameter in the generalized Poisson distribution.
@@ -22,7 +22,7 @@ NULL
 #'  When lambda equals 0, it is the ordinary Poisson distribution, so there is no need to specify the method.
 #'  "Branching" only works when lambda is positive.
 #'  When theta is less than 10, a "Normal-Approximation" may not be reliable.
-#' @return a list that includes generated data, specified and empirical vlaues of theta and lambda.
+#' @return a list that includes generated data, specified and empirical values of theta and lambda.
 #' @examples
 #'  GenUniGpois(2, 0.9, 100, method = "Branching")
 #'  GenUniGpois(5, -0.4, 100, method = "Inversion")

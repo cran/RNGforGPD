@@ -2,7 +2,7 @@
 % Please edit documentation in R/ValidCorrGpois.R
 \name{ValidCorrGpois}
 \alias{ValidCorrGpois}
-\title{Validates Pairwise Correlation}
+\title{Validates Pairwise Correlations}
 \usage{
 ValidCorrGpois(corMat, theta.vec, lambda.vec)
 }
@@ -28,10 +28,10 @@ positive definiteness, symmetry, and correctness of the dimensions.
  ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(3, 2), c(-0.3, -0.2))}
 }
 \references{
-Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds.
- \emph{The American Statistician}, \bold{65(2)}, 104-109.
-
- Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with
+Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with
  Poisson and normal marginals. \emph{Communications in Statistics - Simulation and Computation},
  \bold{46(3)}, 2241-2253.
+ 
+ Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds.
+ \emph{The American Statistician}, \bold{65(2)}, 104-109.
 }

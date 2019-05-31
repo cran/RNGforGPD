@@ -1,15 +1,43 @@
-## ----setup, include = FALSE----------------------------------------------
+---
+title: "RNGfroGPD Vignette"
+author: "Hesen Li, Ruizhe Chen, Hai Nguyen, Yu-che Chung, Ran Gao, Hakan Demirtas"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{RNGfroGPD_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+```
 
-## ---- echo=FALSE, include=FALSE------------------------------------------
+```{r, echo=FALSE, include=FALSE}
+library(RNGforGPD)
 library(corpcor)
 library(VGAM)
 library(mvtnorm)
+library(Matrix)
+```
 
-## ---- echo = FALSE-------------------------------------------------------
+# Introduction
+
+This vignette file conveys certain ideas behind the generalized Poisson distribution and some examples of applying the functions in this package (**RNGforGPD**).
+
+
+# Functions and Comments
+
+
+**GenUniGpois**
+
+We choose different data generation methods according to different parameter values because restrictions apply when the rate parameter or the dispersion parameter of the generalized Poisson is within certain ranges. For example, the normal approximation method does not work well for theta < 10. 
+
+
+```{r, echo = FALSE}
 GenUniGpois = function(theta, lambda, n, details = TRUE, method){
   # Check if parameters are valid
   tol = .Machine$double.eps^0.5
@@ -137,15 +165,26 @@ GenUniGpois = function(theta, lambda, n, details = TRUE, method){
                          specified.lambda = lambda,
                          empirical.lambda = as.numeric(emp.lambda))))
 }
+```
 
-## ------------------------------------------------------------------------
+
+```{r}
 GenUniGpois(2, 0.9, 100, method = "Branching")
 GenUniGpois(5, -0.4, 100, method = "Inversion")
 GenUniGpois(12, 0.5, 100, method = "Normal-Approximation")
 data = GenUniGpois(10, 0.4, 10, method = "Chop-Down", details = FALSE)
 data = GenUniGpois(3, 0.9, 10000, method = "Build-Up", details = FALSE)
+```
 
-## ---- echo = FALSE, warning=FALSE----------------------------------------
+
+**ComputeCorrGpois**
+
+From a practical perspective, correlation bounds among variables are typically narrower than between −1 and 1 (the theoretical maximum and minimum correlation bounds) because different correlation upper and lower bounds may be imposed by the marginal distributions. A simple sorting technique can be used to obtain approximate correlation bounds and this approach works regardless of the data type or the distributional assumption (Demirtas, Hedeker 2011).
+
+Using the sorting technique, we wrote the function `ValidCorrGpois` that computes the lower and upper correlation bounds between a pair of generalized Poisson variables. Besides, this function serves as an integral part of the `ValidCorrGpois` function, which examines whether values of pairwise correlation matrices fall within the limits imposed by the marginal distributions.
+
+
+```{r, echo = FALSE, warning=FALSE}
 ComputeCorrGpois = function(theta.vec, lambda.vec) {
   no.gpois = length(theta.vec)
   samples = 1e+05
@@ -169,12 +208,21 @@ ComputeCorrGpois = function(theta.vec, lambda.vec) {
   cat("\n")
   return(list(min = minmat, max = maxmat))
 }
+```
 
-## ------------------------------------------------------------------------
+
+```{r}
 ComputeCorrGpois(c(3,2,5,4),c(0.3,0.2,0.5,0.6))
 ComputeCorrGpois(c(4,5),c(-0.45,-0.11))
+```
 
-## ---- echo = FALSE-------------------------------------------------------
+
+**ValidCorrGpois**
+
+This function checks the required conditions of the values of pairwise correlations, which include positive definiteness, symmetry, correctness of dimensions, and whether the correlations fall within the correlation bounds. `ValidCorrGpois` ensures that the supplied correlation matrix is valid for simulating multivariate generalized Poisson distributions using `GenMVGpois`. 
+
+
+```{r, echo = FALSE}
 ValidCorrGpois = function (corMat, theta.vec, lambda.vec) {
   no.gpois = length(theta.vec)
   errorCount = 0
@@ -216,12 +264,21 @@ ValidCorrGpois = function (corMat, theta.vec, lambda.vec) {
   }
   return(TRUE)
 }
+```
 
-## ------------------------------------------------------------------------
-ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(0.5, 0.5), c(0.1, 0.105))
-ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(3, 2), c(-0.3, -0.2))
 
-## ---- echo = FALSE-------------------------------------------------------
+```{r}
+# ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(0.5, 0.5), c(0.1, 0.105))
+# ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(3, 2), c(-0.3, -0.2))
+```
+
+
+**QuantileGpois**
+
+This function computes quantiles for generalized Poisson distribution. We guarantee that there will be at least five classes if lambda is negative by forcing $m \geq 4$.
+
+
+```{r, echo = FALSE}
 QuantileGpois = function(p, theta, lambda, details = FALSE){
   # Check if parameters are valid
   if(theta <= 0) stop("Theta has to be greater than 0!")
@@ -285,12 +342,21 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
   }
   return(q)
 }
+```
 
-## ------------------------------------------------------------------------
+
+```{r}
 QuantileGpois(0.98,1,-0.2,details = TRUE)
 QuantileGpois(0.80,2,0.025,details = FALSE)
+```
 
-## ---- echo = FALSE-------------------------------------------------------
+
+**CorrNNGpois**
+
+This function applies the method proposed by Yahav, Shmueli 2011. Yahav and Shmueli found that the relationship between the desired correlation matrix and the actual correlation matrix of a generalized Poisson distribution can be approximated by an exponential function. Following their simple and empirically based approximation method we can correct our actual correlation matrix to the desired correlation matrix. Note that some desired correlations might be infeasible.
+
+
+```{r}
 CorrNNGpois = function(theta.vec, lambda.vec, r) {
   if(abs(r) > 1) stop("The desired correlation r has to be within (-1,1)")
   samples = 1e+05
@@ -305,14 +371,25 @@ CorrNNGpois = function(theta.vec, lambda.vec, r) {
   if( abs(corrected) > 1 ) cat("The actual correlation, ",corrected,", is not feasible!", sep = "")
   else{ return(corrected) }
 }
+```
 
-## ------------------------------------------------------------------------
+
+```{r}
 CorrNNGpois(c(0.1,10), c(0.1, 0.2),0.5)
 CorrNNGpois(c(0.1,10), c(-0.01, -0.02),0.5)
 CorrNNGpois(c(4,2.3), c(-0.32,-0.3),0.7)
 CorrNNGpois(c(14,10), c(-0.8, -0.3),0.99)
+```
 
-## ---- echo = FALSE-------------------------------------------------------
+
+**CmatStarGpois**
+
+This function computes the intermediate correlation values for Poisson-Poisson and Poisson-Normal pairs, and constructs an overall intermediate correlation matrix. It takes the target correlation matrix and returns the intermediate matrix of pairwise correlations.
+
+The output of the `cmat.star` function is important because it is one of the input arguments for the main data generating function: `GenMVGpois`. The intermediate correlation matrix will lead to the target correlation matrix using inverse CDF transformation of the samples generated from a multivariate normal distribution.
+
+
+```{r, echo = FALSE}
 CmatStarGpois = function(corMat, theta.vec, lambda.vec){
   no.gpois = length(theta.vec)
   if (ValidCorrGpois(corMat, theta.vec, lambda.vec)) {
@@ -336,8 +413,10 @@ CmatStarGpois = function(corMat, theta.vec, lambda.vec){
   corMat.star = (corMat.star + t(corMat.star))/2
   return(corMat.star)
 }
+```
 
-## ------------------------------------------------------------------------
+
+```{r}
 lambda.vec = c(-0.2, 0.2, -0.3)
 theta.vec = c(1, 3, 4)
 M = c(0.352, 0.265, 0.342)
@@ -347,8 +426,16 @@ TV = N + t(N)
 diag(TV) = 1
 cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
 cstar
+```
 
-## ---- echo = FALSE-------------------------------------------------------
+
+**GenMVGpois**
+
+
+`GenMVGPois` (the engine function) is the most important function in this package (**RNGforGPD**). It depends on all the other functions in this package and three external packages: **mvtnorm**, **corpcor**, and **VGAM**. The major difference between the univariate generalized Poisson variables generating function and the multivariate one is the consideration of pairwise correlations between variables. These correlations can be verified using `ValidCorrGpois` and corrected by `CorrNNGpois`.
+
+
+```{r, echo = FALSE}
 GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, details = TRUE) {
   if (sample.size == 1 & details == TRUE) {
     stop("Parameter estimates are exactly the same as input of parameters in the case when n = 1!")
@@ -363,6 +450,9 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
     stop("Dimension of cmat.star and number of variables do not match!\n")
   }
   XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
+  while (sum(pnorm(XX) > 0.99) != 0) {
+    XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
+  }
   YY = NULL
   for (i in 1:no.gpois) {
     UU = pnorm(XX[, i])
@@ -392,18 +482,44 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
     return(YY)
   }
 }
+```
 
-## ---- warning = FALSE----------------------------------------------------
-sample.size = 10000; no.gpois = 3
-lambda.vec = c(0.2, 0.2, 0.3); theta.vec = c(1, 3, 4)
-M = c(0.352, 0.265, 0.342); N = diag(3); N[lower.tri(N)] = M
-TV = N + t(N); diag(TV) = 1
+
+```{r, warning = FALSE}
+lambda.vec = c(-0.2, 0.2, -0.3)
+theta.vec = c(1, 3, 4)
+M = c(0.352, 0.265, 0.342)
+N = diag(3)
+N[lower.tri(N)] = M
+TV = N + t(N)
+diag(TV) = 1
 cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
-data = GenMVGpois(sample.size, no.gpois, cstar, theta.vec, lambda.vec, details = FALSE)
+sample.size = 2500; no.gpois = 3
+data = matrix(NA, sample.size, no.gpois)
+for (i in 1:25) {
+     data[(((i - 1) * 100 + 1) : (i * 100)), ] = GenMVGpois(100, no.gpois, cstar, theta.vec, lambda.vec, details = FALSE)
+}
+
 apply(data, 2, mean) # empirical means
 theta.vec / (1 - lambda.vec) # theoretical means
 apply(data, 2, var) # empirical variances
 theta.vec / (1 - lambda.vec)^3 # theoretical variances
 cor(data) # empirical correlation matrix
 TV # specified correlation matrix
+```
 
+
+# Citations
+
+Amatya, A. and Demirtas, H. (2015). Simultaneous generation of multivariate mixed data with Poisson and normal marginals. \emph{Journal of Statistical Computation and Simulation}, \bold{85(15)}, 3129-3139.
+
+Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with
+Poisson and normal marginals. \emph{Communications in Statistics - Simulation and Computation}, \bold{46(3)}, 2241-2253.
+
+Demirtas, H. (2017). On accurate and precise generation of generalized
+Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
+\bold{46(1)}, 489-499.
+
+Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds. \emph{The American Statistician}, \bold{65(2)}, 104-109.
+
+Yahav, I. and Shmueli, G. (2012). On generating multivariate Poisson data in management science applications. \emph{Applied Stochastic Models in Business and Industry}, \bold{28(1)}, 91-102.
