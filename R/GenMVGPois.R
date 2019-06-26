@@ -68,9 +68,6 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
     stop("Dimension of cmat.star and number of variables do not match!\n")
   }
   XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
-  while (sum(pnorm(XX) > 0.99) != 0) {
-    XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
-  }
   YY = NULL
   for (i in 1:no.gpois) {
     UU = pnorm(XX[, i])

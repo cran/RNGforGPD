@@ -365,9 +365,6 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
     stop("Dimension of cmat.star and number of variables do not match!\n")
   }
   XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
-  while (sum(pnorm(XX) > 0.99) != 0) {
-    XX = rmvnorm(sample.size, rep(0, no.gpois), cmat.star)
-  }
   YY = NULL
   for (i in 1:no.gpois) {
     UU = pnorm(XX[, i])
@@ -407,12 +404,8 @@ N[lower.tri(N)] = M
 TV = N + t(N)
 diag(TV) = 1
 cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
-sample.size = 2500; no.gpois = 3
-data = matrix(NA, sample.size, no.gpois)
-for (i in 1:25) {
-     data[(((i - 1) * 100 + 1) : (i * 100)), ] = GenMVGpois(100, no.gpois, cstar, theta.vec, lambda.vec, details = FALSE)
-}
-
+sample.size = 10000; no.gpois = 3
+data = GenMVGpois(sample.size, no.gpois, cstar, theta.vec, lambda.vec, details = FALSE)
 apply(data, 2, mean) # empirical means
 theta.vec / (1 - lambda.vec) # theoretical means
 apply(data, 2, var) # empirical variances

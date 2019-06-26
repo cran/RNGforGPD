@@ -16,8 +16,8 @@
 #' @details
 #' \tabular{ll}{Package: \tab RNGforGPD\cr
 #'              Type: \tab Package\cr
-#'              Version: \tab 1.0.1\cr
-#'              Date: \tab 2019-05-31\cr
+#'              Version: \tab 1.0.2\cr
+#'              Date: \tab 2019-06-25\cr
 #'              License: \tab GPL-2 | GPL-3}
 #' @author
 #'  Hesen Li, Ruizhe Chen, Hai Nguyen, Yu-Che Chung, Ran Gao, Hakan Demirtas
