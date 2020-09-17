@@ -4,7 +4,7 @@
 \alias{ValidCorrGpois}
 \title{Validates Pairwise Correlations}
 \usage{
-ValidCorrGpois(corMat, theta.vec, lambda.vec)
+ValidCorrGpois(corMat, theta.vec, lambda.vec, verbose = TRUE)
 }
 \arguments{
 \item{corMat}{a positive definite target correlation matrix whose entries are within the valid correlation bounds.}
@@ -13,7 +13,9 @@ ValidCorrGpois(corMat, theta.vec, lambda.vec)
 length of the vector is at least two, and each value has to be a positive number.}
 
 \item{lambda.vec}{dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.}
+of the vector is at least two. All lambda values have to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.}
+
+\item{verbose}{logical variable that determines whether to display the traces. Default is set to TRUE.}
 }
 \value{
 TRUE or FALSE.
@@ -24,8 +26,10 @@ positive definiteness, symmetry, and correctness of the dimensions.
 }
 \examples{
 \donttest{
- ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(0.5, 0.5), c(0.1, 0.105))
- ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), c(3, 2), c(-0.3, -0.2))}
+ ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), 
+                c(0.5, 0.5), c(0.1, 0.105), verbose = TRUE)
+ ValidCorrGpois(matrix(c(1, 0.9, 0.9, 1), byrow = TRUE, nrow = 2), 
+                c(3, 2), c(-0.3, -0.2), verbose = TRUE)}
 }
 \references{
 Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with

@@ -4,27 +4,30 @@
 \alias{ComputeCorrGpois}
 \title{Computes the Lower and Upper Correlation Bounds}
 \usage{
-ComputeCorrGpois(theta.vec, lambda.vec)
+ComputeCorrGpois(theta.vec, lambda.vec, verbose = TRUE)
 }
 \arguments{
 \item{theta.vec}{rate parameters in the generalized Poisson distribution. It is assumed that the
 length of the vector is at least two, and each value has to be a positive number.}
 
 \item{lambda.vec}{dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.}
+of the vector is at least two. All lambda values have to be less than 1. 
+For lambda < 0, lambda must be greater than or equal to -theta/4.}
+
+\item{verbose}{logical variable that determines whether to display the traces. Default is set to TRUE.}
 }
 \value{
 lower and upper correlation bounds.
 }
 \description{
-\code{ComputeCorrGpois} computes the lower and upper correlation bounds of a pairwise
-correlation between any pair of generalized Poisson variables using the Generate, Sort,
+\code{ComputeCorrGpois} computes the lower and upper correlation bounds of pairwise
+correlations between any pair of generalized Poisson variables using the Generate, Sort,
 and Correlate (GSC) algorithm described in Demirtas and Hedeker (2011).
 }
 \examples{
  \donttest{
- ComputeCorrGpois(c(3,2,5,4),c(0.3,0.2,0.5,0.6))
- ComputeCorrGpois(c(4,5),c(-0.45,-0.11))}
+ ComputeCorrGpois(c(3, 2, 5, 4), c(0.3, 0.2, 0.5, 0.6), verbose = TRUE)
+ ComputeCorrGpois(c(4, 5), c(-0.45, -0.11), verbose = TRUE)}
 }
 \references{
 Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds.

@@ -10,27 +10,26 @@ GenUniGpois(theta, lambda, n, details = TRUE, method)
 \item{theta}{the rate parameter in the generalized Poisson distribution. It has to be a positive number.}
 
 \item{lambda}{the dispersion parameter in the generalized Poisson distribution.
-It has to be < 1. For lambda < 0, lambda must be greater than or equal to -theta/4.}
+It has to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.}
 
 \item{n}{number of data points that is to be generated.}
 
-\item{details}{index to indicate whether or not to print out the estimates of parameters.
-The default is set as TRUE.}
+\item{details}{index to indicate whether to print out the estimates of parameters. Default is set to TRUE.}
 
-\item{method}{index to specify one of the five methods: "Inversion", "Branching", "Normal-Approximation", "Build-Up" and "Chop-Down".}
+\item{method}{index to specify one of the five methods: "Inversion", "Branching", "Normal-Approximation", "Build-Up" or "Chop-Down".}
 }
 \value{
-a list that includes generated data, specified and empirical values of theta and lambda.
+a list that includes generated data, specified and empirical values of theta and lambda, and the specified method.
 }
 \description{
 \code{GenUniGpois} generates univariate random variables from the generalized Poisson
-distribution using one of the five methods including Inversion, Branching, Normal-Approximation, Build-Up, Chop-Down.
+distribution using one of the five methods including Inversion, Branching, Normal-Approximation, Build-Up, and Chop-Down.
 }
 \details{
 All five methods come from Demirtas (2017).
- When lambda equals 0, it is the ordinary Poisson distribution, so there is no need to specify the method.
+ When lambda equals to 0, it is the ordinary Poisson distribution, so there is no need to specify the method.
  "Branching" only works when lambda is positive.
- When theta is less than 10, a "Normal-Approximation" may not be reliable.
+ When theta is less than 10, the "Normal-Approximation" may not be reliable.
 }
 \examples{
  GenUniGpois(2, 0.9, 100, method = "Branching")

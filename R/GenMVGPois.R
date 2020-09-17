@@ -1,11 +1,5 @@
-#' @include GenUniGpois.R
-#' @include ValidCorrGpois.R
-#' @include ComputeCorrGpois.R
-#' @include CorrNNGpois.R
-#' @include CmatStarGpois.R
 #' @include QuantileGpois.R
 #' @importFrom mvtnorm rmvnorm
-#' @importFrom corpcor is.positive.definite
 #' @importFrom stats pnorm
 #' @import VGAM
 NULL
@@ -22,8 +16,8 @@ NULL
 #' @param theta.vec rate parameters in the generalized Poisson distribution. It is assumed that the
 #'  length of the vector is at least two, and each value has to be a positive number.
 #' @param lambda.vec dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-#'  of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.
-#' @param details index of whether to display the specified and empirical values of parameters. Default is set to be TRUE.
+#'  of the vector is at least two. All lambda values have to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.
+#' @param details index of whether to display the specified and empirical values of parameters. Default is set to TRUE.
 #' @return data that follow multivariate generalized Poisson distribution.
 #' @examples
 #' \donttest{
@@ -31,12 +25,12 @@ NULL
 #'  lambda.vec = c(0.2, 0.2, 0.3); theta.vec = c(1, 3, 4)
 #'  M = c(0.352, 0.265, 0.342); N = diag(3); N[lower.tri(N)] = M
 #'  TV = N + t(N); diag(TV) = 1
-#'  cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
+#'  cstar = CmatStarGpois(TV, theta.vec, lambda.vec, verbose = TRUE)
 #'  data = GenMVGpois(sample.size, no.gpois, cstar, theta.vec, lambda.vec, details = FALSE)
 #'  apply(data, 2, mean) # empirical means
-#'  theta.vec / (1 - lambda.vec) # theoretical means
+#'  theta.vec/(1 - lambda.vec) # theoretical means
 #'  apply(data, 2, var) # empirical variances
-#'  theta.vec / (1 - lambda.vec)^3 # theoretical variances
+#'  theta.vec/(1 - lambda.vec)^3 # theoretical variances
 #'  cor(data) # empirical correlation matrix
 #'  TV # specified correlation matrix}
 #' @references
@@ -71,7 +65,7 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
   YY = NULL
   for (i in 1:no.gpois) {
     UU = pnorm(XX[, i])
-    XXgpois = QuantileGpois(UU, theta.vec[i],lambda.vec[i], FALSE)
+    XXgpois = QuantileGpois(UU, theta.vec[i], lambda.vec[i], FALSE)
     YY = cbind(YY, XXgpois)
   }
   colnames(YY) = NULL

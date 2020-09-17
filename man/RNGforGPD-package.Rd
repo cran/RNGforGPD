@@ -16,8 +16,8 @@ This package is about generating univariate and multivariate data that follow th
 \details{
 \tabular{ll}{Package: \tab RNGforGPD\cr
              Type: \tab Package\cr
-             Version: \tab 1.0.2\cr
-             Date: \tab 2019-06-25\cr
+             Version: \tab 1.0.3\cr
+             Date: \tab 2020-08-05\cr
              License: \tab GPL-2 | GPL-3}
 }
 \references{

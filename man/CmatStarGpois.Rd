@@ -4,16 +4,19 @@
 \alias{CmatStarGpois}
 \title{Computes Intermediate Correlation Matrix}
 \usage{
-CmatStarGpois(corMat, theta.vec, lambda.vec)
+CmatStarGpois(corMat, theta.vec, lambda.vec, verbose = TRUE)
 }
 \arguments{
 \item{corMat}{target correlation matrix.}
 
-\item{theta.vec}{theta.vec rate parameters in the generalized Poisson distribution. It is assumed that the
+\item{theta.vec}{rate parameters in the generalized Poisson distribution. It is assumed that the
 length of the vector is at least two, and each value has to be a positive number.}
 
 \item{lambda.vec}{dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.}
+of the vector is at least two. All lambda values have to be less than 1.
+For lambda < 0, lambda must be greater than or equal to -theta/4.}
+
+\item{verbose}{logical variable that determines whether to display the traces. Default is set to TRUE.}
 }
 \value{
 intermediate correlation matrix.
@@ -33,7 +36,7 @@ matrix is used.
  N[lower.tri(N)] = M
  TV = N + t(N)
  diag(TV) = 1
- cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
+ cstar = CmatStarGpois(TV, theta.vec, lambda.vec, verbose = TRUE)
  cstar}
 }
 \references{

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Hesen Li, Ruizhe Chen, Hai Nguyen, Yu-Che Chung, Ran Gao, Hakan Demirtas" />
+
+<meta name="date" content="2020-09-16" />
+
+<title>Using the RNGforGPD package</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Using the RNGforGPD package</h1>
+<h4 class="author">Hesen Li, Ruizhe Chen, Hai Nguyen, Yu-Che Chung, Ran Gao, Hakan Demirtas</h4>
+<h4 class="date">2020-09-16</h4>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This vignette file conveys certain ideas behind the generalized Poisson distribution and some examples of applying the functions in this package (<strong>RNGforGPD</strong>).</p>
+</div>
+<div id="functions-and-comments" class="section level1">
+<h1>Functions and Comments</h1>
+<p><strong>GenUniGpois</strong></p>
+<p>We choose different data generation methods according to different parameter values because restrictions apply when the rate parameter or the dispersion parameter of the generalized Poisson is within certain ranges. For example, the normal approximation method does not work well for theta &lt; 10.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">GenUniGpois</span>(<span class="dv">2</span>, <span class="fl">0.9</span>, <span class="dv">100</span>, <span class="dt">method =</span> <span class="st">&quot;Branching&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; [1] &quot;Specified theta is 2, empirical theta is 1.766699, specified lambda is 0.9, empirical lambda is 0.892862.&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">GenUniGpois</span>(<span class="dv">5</span>, <span class="fl">-0.4</span>, <span class="dv">100</span>, <span class="dt">method =</span> <span class="st">&quot;Inversion&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt; [1] &quot;Specified theta is 5, empirical theta is 4.453052, specified lambda is -0.4, empirical lambda is -0.333249.&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">GenUniGpois</span>(<span class="dv">12</span>, <span class="fl">0.5</span>, <span class="dv">100</span>, <span class="dt">method =</span> <span class="st">&quot;Normal-Approximation&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; [1] &quot;Specified theta is 12, empirical theta is 11.39504, specified lambda is 0.5, empirical lambda is 0.514278.&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>data =<span class="st"> </span><span class="kw">GenUniGpois</span>(<span class="dv">10</span>, <span class="fl">0.4</span>, <span class="dv">10</span>, <span class="dt">method =</span> <span class="st">&quot;Chop-Down&quot;</span>, <span class="dt">details =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8"></a>data</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; $data</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt;  [1] 13 14  7 36 27 32 31 12  7  9</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; </span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; $specified.theta</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; [1] 10</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; </span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; $empirical.theta</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; [1] 7.152157</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; </span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; $specified.lambda</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; [1] 0.4</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; </span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; $empirical.lambda</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; [1] 0.619566</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; </span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt; $method</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt; [1] &quot;Chop-Down&quot;</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>data =<span class="st"> </span><span class="kw">GenUniGpois</span>(<span class="dv">3</span>, <span class="fl">0.9</span>, <span class="dv">10</span>, <span class="dt">method =</span> <span class="st">&quot;Build-Up&quot;</span>, <span class="dt">details =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-27"><a href="#cb1-27"></a>data</span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt; $data</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="co">#&gt;  [1] 11 13  8  4 19 51  7  3 52 20</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="co">#&gt; </span></span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="co">#&gt; $specified.theta</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a><span class="co">#&gt; </span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="co">#&gt; $empirical.theta</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a><span class="co">#&gt; [1] 4.541306</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a><span class="co">#&gt; </span></span>
+<span id="cb1-37"><a href="#cb1-37"></a><span class="co">#&gt; $specified.lambda</span></span>
+<span id="cb1-38"><a href="#cb1-38"></a><span class="co">#&gt; [1] 0.9</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a><span class="co">#&gt; </span></span>
+<span id="cb1-40"><a href="#cb1-40"></a><span class="co">#&gt; $empirical.lambda</span></span>
+<span id="cb1-41"><a href="#cb1-41"></a><span class="co">#&gt; [1] 0.758441</span></span>
+<span id="cb1-42"><a href="#cb1-42"></a><span class="co">#&gt; </span></span>
+<span id="cb1-43"><a href="#cb1-43"></a><span class="co">#&gt; $method</span></span>
+<span id="cb1-44"><a href="#cb1-44"></a><span class="co">#&gt; [1] &quot;Build-Up&quot;</span></span></code></pre></div>
+<p><strong>ComputeCorrGpois</strong></p>
+<p>From a practical perspective, correlation bounds among variables are typically narrower than between −1 and 1 (the theoretical maximum and minimum correlation bounds) because different correlation upper and lower bounds may be imposed by the marginal distributions. A simple sorting technique can be used to obtain approximate correlation bounds and this approach works regardless of the data type or the distributional assumption (Demirtas, Hedeker 2011).</p>
+<p>Using the sorting technique, we wrote the function <code>ValidCorrGpois</code> that computes the lower and upper correlation bounds between a pair of generalized Poisson variables. Besides, this function serves as an integral part of the <code>ValidCorrGpois</code> function, which examines whether values of pairwise correlation matrices fall within the limits imposed by the marginal distributions.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">ComputeCorrGpois</span>(<span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">4</span>),<span class="kw">c</span>(<span class="fl">0.3</span>,<span class="fl">0.2</span>,<span class="fl">0.5</span>,<span class="fl">0.6</span>), <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="co">#&gt; $min</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; [1,]         NA -0.8450011 -0.8480535 -0.8029030</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; [2,] -0.8450011         NA -0.8351815 -0.7883415</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt; [3,] -0.8480535 -0.8351815         NA -0.7933644</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#&gt; [4,] -0.8029030 -0.7883415 -0.7933644         NA</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt; </span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; $max</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; [1,]        NA 0.9834657 0.9934251 0.9871988</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; [2,] 0.9834657        NA 0.9863814 0.9808782</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; [3,] 0.9934251 0.9863814        NA 0.9948990</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="co">#&gt; [4,] 0.9871988 0.9808782 0.9948990        NA</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="kw">ComputeCorrGpois</span>(<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">5</span>),<span class="kw">c</span>(<span class="op">-</span><span class="fl">0.45</span>,<span class="op">-</span><span class="fl">0.11</span>), <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co">#&gt; $min</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="co">#&gt; [1,]        NA -0.948846</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co">#&gt; [2,] -0.948846        NA</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co">#&gt; </span></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="co">#&gt; $max</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="co">#&gt; [1,]        NA 0.9535897</span></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co">#&gt; [2,] 0.9535897        NA</span></span></code></pre></div>
+<p><strong>ValidCorrGpois</strong></p>
+<p>This function checks the required conditions of the values of pairwise correlations, which include positive definiteness, symmetry, correctness of dimensions, and whether the correlations fall within the correlation bounds. <code>ValidCorrGpois</code> ensures that the supplied correlation matrix is valid for simulating multivariate generalized Poisson distributions using <code>GenMVGpois</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">ValidCorrGpois</span>(<span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span>, <span class="dv">1</span>), <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">nrow =</span> <span class="dv">2</span>), <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>), <span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.105</span>),                  <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; ..</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt; ..</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; ...</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="kw">ValidCorrGpois</span>(<span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span>, <span class="dv">1</span>), <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">nrow =</span> <span class="dv">2</span>), <span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">2</span>), <span class="kw">c</span>(<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">-0.2</span>), <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; ..</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; ..</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; ...</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><strong>QuantileGpois</strong></p>
+<p>This function computes quantiles for generalized Poisson distribution. We guarantee that there will be at least five classes if lambda is negative by forcing <span class="math inline">\(m \geq 4\)</span>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">QuantileGpois</span>(<span class="fl">0.98</span>, <span class="dv">1</span>, <span class="fl">-0.2</span>, <span class="dt">details =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt; x = 0, P(X = x) = 0.367879441171442, P(X &lt;= x) = 0.367879441171442</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt; x = 1, P(X = x) = 0.449328964117222, P(X &lt;= x) = 0.817208405288664</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; x = 2, P(X = x) = 0.164643490828208, P(X &lt;= x) = 0.981851896116872</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt; When lambda is negative, we need to account for truncation error. The adjusted CDF are: 0.3746792 0.8323133 1</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">QuantileGpois</span>(<span class="fl">0.80</span>, <span class="dv">2</span>, <span class="fl">0.025</span>, <span class="dt">details =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; [1] 3</span></span></code></pre></div>
+<p><strong>CorrNNGpois</strong></p>
+<p>This function applies the method proposed by Yahav, Shmueli 2011. They found that the relationship between the desired correlation matrix and the actual correlation matrix of a generalized Poisson distribution can be approximated by an exponential function. Following their simple and empirical approximation method we can correct our actual correlation matrix to the desired correlation matrix. Note that some desired correlations might be infeasible.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">CorrNNGpois</span>(<span class="kw">c</span>(<span class="fl">0.1</span>, <span class="dv">10</span>), <span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>), <span class="fl">0.5</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; [1] 0.7996092</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">CorrNNGpois</span>(<span class="kw">c</span>(<span class="fl">0.1</span>, <span class="dv">10</span>), <span class="kw">c</span>(<span class="op">-</span><span class="fl">0.01</span>, <span class="fl">-0.02</span>), <span class="fl">0.5</span>)</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; [1] 0.8257034</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="kw">CorrNNGpois</span>(<span class="kw">c</span>(<span class="dv">4</span>, <span class="fl">2.3</span>), <span class="kw">c</span>(<span class="op">-</span><span class="fl">0.32</span>, <span class="fl">-0.3</span>), <span class="fl">0.7</span>)</span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; [1] 0.7521946</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">CorrNNGpois</span>(<span class="kw">c</span>(<span class="dv">14</span>, <span class="dv">10</span>), <span class="kw">c</span>(<span class="op">-</span><span class="fl">0.8</span>, <span class="fl">-0.3</span>), <span class="fl">0.99</span>)</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; The actual correlation, 1.019696, is not feasible!</span></span></code></pre></div>
+<p><strong>CmatStarGpois</strong></p>
+<p>This function computes the intermediate correlation values for Poisson-Poisson and Poisson-Normal pairs, and constructs an overall intermediate correlation matrix. It takes the target correlation matrix and returns the intermediate matrix of pairwise correlations.</p>
+<p>The output of the <code>cmat.star</code> function is important because it is one of the input arguments for the main data generating function: <code>GenMVGpois</code>. The intermediate correlation matrix will lead to the target correlation matrix using inverse CDF transformation of the samples generated from a multivariate normal distribution.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>lambda.vec =<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">-0.3</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>theta.vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>M =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.352</span>, <span class="fl">0.265</span>, <span class="fl">0.342</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a>N =<span class="st"> </span><span class="kw">diag</span>(<span class="dv">3</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a>N[<span class="kw">lower.tri</span>(N)] =<span class="st"> </span>M</span>
+<span id="cb6-6"><a href="#cb6-6"></a>TV =<span class="st"> </span>N <span class="op">+</span><span class="st"> </span><span class="kw">t</span>(N)</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="kw">diag</span>(TV) =<span class="st"> </span><span class="dv">1</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>cstar =<span class="st"> </span><span class="kw">CmatStarGpois</span>(TV, theta.vec, lambda.vec, <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; ......</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; ......</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; ......</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; .........</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>cstar</span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt;           [,1]      [,2]      [,3]</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; [1,] 1.0000000 0.3946119 0.2942989</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; [2,] 0.3946119 1.0000000 0.3599315</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; [3,] 0.2942989 0.3599315 1.0000000</span></span></code></pre></div>
+<p><strong>GenMVGpois</strong></p>
+<p><code>GenMVGPois</code> (the engine function) is the most important function in this package (<strong>RNGforGPD</strong>). It depends on all the other functions in this package and three external packages: <strong>mvtnorm</strong>, <strong>corpcor</strong>, and <strong>VGAM</strong>. The major difference between the univariate generalized Poisson variables generating function and the multivariate one is the consideration of pairwise correlations between variables. These correlations can be verified using <code>ValidCorrGpois</code> and corrected by <code>CorrNNGpois</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>lambda.vec =<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">-0.3</span>)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>theta.vec =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>M =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.352</span>, <span class="fl">0.265</span>, <span class="fl">0.342</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a>N =<span class="st"> </span><span class="kw">diag</span>(<span class="dv">3</span>)</span>
+<span id="cb7-5"><a href="#cb7-5"></a>N[<span class="kw">lower.tri</span>(N)] =<span class="st"> </span>M</span>
+<span id="cb7-6"><a href="#cb7-6"></a>TV =<span class="st"> </span>N <span class="op">+</span><span class="st"> </span><span class="kw">t</span>(N)</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="kw">diag</span>(TV) =<span class="st"> </span><span class="dv">1</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>cstar =<span class="st"> </span><span class="kw">CmatStarGpois</span>(TV, theta.vec, lambda.vec, <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; ......</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; ......</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt; ......</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="co">#&gt; .........</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>sample.size =<span class="st"> </span><span class="dv">10000</span>; no.gpois =<span class="st"> </span><span class="dv">3</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>data =<span class="st"> </span><span class="kw">GenMVGpois</span>(sample.size, no.gpois, cstar, theta.vec, lambda.vec, <span class="dt">details =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="kw">apply</span>(data, <span class="dv">2</span>, mean) <span class="co"># empirical means</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="co">#&gt; [1] 0.8368 3.7361 3.0742</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>theta.vec <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>lambda.vec) <span class="co"># theoretical means</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a><span class="co">#&gt; [1] 0.8333333 3.7500000 3.0769231</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a><span class="kw">apply</span>(data, <span class="dv">2</span>, var) <span class="co"># empirical variances</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a><span class="co">#&gt; [1] 0.5740232 5.8216390 1.8444788</span></span>
+<span id="cb7-21"><a href="#cb7-21"></a>theta.vec <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>lambda.vec)<span class="op">^</span><span class="dv">3</span> <span class="co"># theoretical variances</span></span>
+<span id="cb7-22"><a href="#cb7-22"></a><span class="co">#&gt; [1] 0.5787037 5.8593750 1.8206645</span></span>
+<span id="cb7-23"><a href="#cb7-23"></a><span class="kw">cor</span>(data) <span class="co"># empirical correlation matrix</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a><span class="co">#&gt;           [,1]      [,2]      [,3]</span></span>
+<span id="cb7-25"><a href="#cb7-25"></a><span class="co">#&gt; [1,] 1.0000000 0.3471437 0.2714735</span></span>
+<span id="cb7-26"><a href="#cb7-26"></a><span class="co">#&gt; [2,] 0.3471437 1.0000000 0.3266189</span></span>
+<span id="cb7-27"><a href="#cb7-27"></a><span class="co">#&gt; [3,] 0.2714735 0.3266189 1.0000000</span></span>
+<span id="cb7-28"><a href="#cb7-28"></a>TV <span class="co"># specified correlation matrix</span></span>
+<span id="cb7-29"><a href="#cb7-29"></a><span class="co">#&gt;       [,1]  [,2]  [,3]</span></span>
+<span id="cb7-30"><a href="#cb7-30"></a><span class="co">#&gt; [1,] 1.000 0.352 0.265</span></span>
+<span id="cb7-31"><a href="#cb7-31"></a><span class="co">#&gt; [2,] 0.352 1.000 0.342</span></span>
+<span id="cb7-32"><a href="#cb7-32"></a><span class="co">#&gt; [3,] 0.265 0.342 1.000</span></span></code></pre></div>
+</div>
+<div id="citations" class="section level1">
+<h1>Citations</h1>
+<p>Amatya, A. and Demirtas, H. (2015). Simultaneous generation of multivariate mixed data with Poisson and normal marginals. , , 3129-3139.</p>
+<p>Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with Poisson and normal marginals. , , 2241-2253.</p>
+<p>Demirtas, H. (2017). On accurate and precise generation of generalized Poisson variates. , , 489-499.</p>
+<p>Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds. , , 104-109.</p>
+<p>Yahav, I. and Shmueli, G. (2012). On generating multivariate Poisson data in management science applications. , , 91-102.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

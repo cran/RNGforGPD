@@ -11,7 +11,8 @@ CorrNNGpois(theta.vec, lambda.vec, r)
 length of the vector is at least two, and each value has to be a positive number.}
 
 \item{lambda.vec}{dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.}
+of the vector is at least two. All lambda values have to be less than 1. 
+For lambda < 0, lambda must be greater than or equal to -theta/4.}
 
 \item{r}{desired target correlation.}
 }
@@ -24,10 +25,10 @@ a pair of generalized Poisson variables.
 }
 \examples{
 \donttest{
- CorrNNGpois(c(0.1,10), c(0.1, 0.2),0.5)
- CorrNNGpois(c(0.1,10), c(-0.01, -0.02),0.5)
- CorrNNGpois(c(4,2.3), c(-0.32,-0.3),0.7)
- CorrNNGpois(c(14,10), c(-0.8, -0.3),0.99)}
+ CorrNNGpois(c(0.1, 10), c(0.1, 0.2), 0.5)
+ CorrNNGpois(c(0.1, 10), c(-0.01, -0.02), 0.5)
+ CorrNNGpois(c(4, 2.3), c(-0.32,-0.3), 0.7)
+ CorrNNGpois(c(14, 10), c(-0.8, -0.3), 0.99)}
 }
 \references{
 Yahav, I. and Shmueli, G.(2012), On generating multivariate Poisson data in management science applications.

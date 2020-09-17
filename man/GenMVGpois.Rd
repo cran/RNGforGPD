@@ -4,8 +4,14 @@
 \alias{GenMVGpois}
 \title{Generates Data from Multivariate Generalized Poisson Distribution}
 \usage{
-GenMVGpois(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec,
-  details = TRUE)
+GenMVGpois(
+  sample.size,
+  no.gpois,
+  cmat.star,
+  theta.vec,
+  lambda.vec,
+  details = TRUE
+)
 }
 \arguments{
 \item{sample.size}{desired sample size (number of rows) for the multivariate generalized Poisson data}
@@ -18,9 +24,9 @@ GenMVGpois(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec,
 length of the vector is at least two, and each value has to be a positive number.}
 
 \item{lambda.vec}{dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.}
+of the vector is at least two. All lambda values have to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.}
 
-\item{details}{index of whether to display the specified and empirical values of parameters. Default is set to be TRUE.}
+\item{details}{index of whether to display the specified and empirical values of parameters. Default is set to TRUE.}
 }
 \value{
 data that follow multivariate generalized Poisson distribution.
@@ -35,12 +41,12 @@ Poisson variables with correlation matrix \emph{cmat.star} and pre-specified mar
  lambda.vec = c(0.2, 0.2, 0.3); theta.vec = c(1, 3, 4)
  M = c(0.352, 0.265, 0.342); N = diag(3); N[lower.tri(N)] = M
  TV = N + t(N); diag(TV) = 1
- cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
+ cstar = CmatStarGpois(TV, theta.vec, lambda.vec, verbose = TRUE)
  data = GenMVGpois(sample.size, no.gpois, cstar, theta.vec, lambda.vec, details = FALSE)
  apply(data, 2, mean) # empirical means
- theta.vec / (1 - lambda.vec) # theoretical means
+ theta.vec/(1 - lambda.vec) # theoretical means
  apply(data, 2, var) # empirical variances
- theta.vec / (1 - lambda.vec)^3 # theoretical variances
+ theta.vec/(1 - lambda.vec)^3 # theoretical variances
  cor(data) # empirical correlation matrix
  TV # specified correlation matrix}
 }

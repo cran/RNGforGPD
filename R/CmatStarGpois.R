@@ -13,10 +13,12 @@ NULL
 #' matrix is used.
 #'
 #' @param corMat target correlation matrix.
-#' @param theta.vec theta.vec rate parameters in the generalized Poisson distribution. It is assumed that the
+#' @param theta.vec rate parameters in the generalized Poisson distribution. It is assumed that the
 #'  length of the vector is at least two, and each value has to be a positive number.
 #' @param lambda.vec dispersion parameters in the generalized Poisson distribution. It is assumed that the length
-#'  of the vector is at least two. All lambda values have to be < 1. For lambda < 0, lambda must be >= -theta/4.
+#'  of the vector is at least two. All lambda values have to be less than 1.
+#'  For lambda < 0, lambda must be greater than or equal to -theta/4.
+#' @param verbose logical variable that determines whether to display the traces. Default is set to TRUE.
 #' @return intermediate correlation matrix.
 #' @examples
 #' \donttest{
@@ -27,28 +29,43 @@ NULL
 #'  N[lower.tri(N)] = M
 #'  TV = N + t(N)
 #'  diag(TV) = 1
-#'  cstar = CmatStarGpois(TV, theta.vec, lambda.vec)
+#'  cstar = CmatStarGpois(TV, theta.vec, lambda.vec, verbose = TRUE)
 #'  cstar}
 #' @references
 #'  Yahav, I. and Shmueli, G. (2012). On generating multivariate Poisson data in management science applications.
 #'  \emph{Applied Stochastic Models in Business and Industry}, \bold{28(1)}, 91-102.
 #' @export
-CmatStarGpois = function(corMat, theta.vec, lambda.vec){
+CmatStarGpois = function(corMat, theta.vec, lambda.vec, verbose = TRUE) {
   no.gpois = length(theta.vec)
-  if (ValidCorrGpois(corMat, theta.vec, lambda.vec)) {
+  if (ValidCorrGpois(corMat, theta.vec, lambda.vec, verbose)) {
     corMat.star = diag(nrow(corMat))
-    for (i in 1:nrow(corMat)) {
-      for (j in 1:no.gpois) {
-        if (i != j) {
-          corMat.star[i,j] = CorrNNGpois(c(theta.vec[i], theta.vec[j]),
-                                          c(lambda.vec[i], lambda.vec[j]),
-                                          corMat[i, j])
-        }
+    # lower matrix index
+    g <- expand.grid(row = 1:nrow(corMat), col = 1:ncol(corMat))
+    g.lower.tri <- g[lower.tri(corMat, diag = TRUE),]
+    corMat.lower.index <- g.lower.tri[-which(g.lower.tri[,1]==g.lower.tri[,2]),]
+    for (i in 1:nrow(corMat.lower.index)) {
+      i.temp <- corMat.lower.index[i,1]
+      j.temp <- corMat.lower.index[i,2]
+      corMat.star[i.temp,j.temp] <- CorrNNGpois(c(theta.vec[i.temp], theta.vec[j.temp]),
+                                                c(lambda.vec[i.temp], lambda.vec[j.temp]),
+                                                corMat[i.temp,j.temp])
+      if (verbose == TRUE) {
         cat(".")
       }
     }
+    # upper matrix index
+    g.upper.tri <- g[upper.tri(corMat, diag = TRUE),]
+    corMat.upper.index <- g.upper.tri[-which(g.upper.tri[,1]==g.upper.tri[,2]),]
+    for (i in 1:nrow(corMat.upper.index)) {
+      i.temp <- corMat.upper.index[i,1]
+      j.temp <- corMat.upper.index[i,2]
+      sym.index <- intersect(which(corMat.lower.index[,2]==i.temp), which(corMat.lower.index[,1]==j.temp))
+      corMat.star[i.temp, j.temp] <- corMat.star[corMat.lower.index[sym.index,1], corMat.lower.index[sym.index,2]]
+    }
   }
-  cat("\n")
+  if (verbose == TRUE) {
+    cat("\n")
+  }
   if (!is.positive.definite(corMat.star)) {
     warning("Intermediate correlation matrix is not positive definite. Nearest positive definite matrix is used!")
     corMat.star = as.matrix(nearPD(corMat.star, corr = TRUE, keepDiag = TRUE)$mat)

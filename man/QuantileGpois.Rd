@@ -7,28 +7,27 @@
 QuantileGpois(p, theta, lambda, details = FALSE)
 }
 \arguments{
-\item{p}{percentile of the generalized Poisson distribution.}
+\item{p}{percentile of the generalized Poisson distribution, p should be between 0 and 1.}
 
 \item{theta}{the rate parameter in the generalized Poisson distribution. It has to be a positive number.}
 
 \item{lambda}{the dispersion parameter in the generalized Poisson distribution.
-It has to be < 1. For lambda < 0, lambda must be >= -theta/4.}
+It has to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.}
 
-\item{details}{show the detailed information of probability and cumulative probability.
-Default is set as FALSE.}
+\item{details}{index of whether to display the probabilities and cumulative probabilities.
+Default is set to FALSE.}
 }
 \value{
-quantile of the specified distribution if the parameter \emph{details} is set as FALSE.
- quantile and the detailed information of probability and cumulative probability if
- the parameter \emph{details} is set as TRUE.
+quantile of the specified distribution if the parameter \emph{details} is set to FALSE, 
+detailed information of probabilities and cumulative probabilities otherwise.
 }
 \description{
 \code{QuantileGpois} computes the quantile for the generalized Poisson distribution
- for specified values of percentile, lambda and theta parameters.
+ for specified values of percentile, rate and dispersion parameters.
 }
 \examples{
- QuantileGpois(0.98,1,-0.2,details = TRUE)
- QuantileGpois(0.80,2,0.025,details = FALSE)
+ QuantileGpois(0.98, 1, -0.2, details = TRUE)
+ QuantileGpois(0.80, 2, 0.025, details = FALSE)
 }
 \references{
 Demirtas, H. (2017). On accurate and precise generation of generalized

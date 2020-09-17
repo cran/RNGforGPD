@@ -1,32 +1,34 @@
 #' Computes Quantiles
 #'
 #' \code{QuantileGpois} computes the quantile for the generalized Poisson distribution
-#'  for specified values of percentile, lambda and theta parameters.
+#'  for specified values of percentile, rate and dispersion parameters.
 #'
-#' @param p percentile of the generalized Poisson distribution.
+#' @param p percentile of the generalized Poisson distribution, p should be between 0 and 1.
 #' @param theta the rate parameter in the generalized Poisson distribution. It has to be a positive number.
 #' @param lambda the dispersion parameter in the generalized Poisson distribution.
-#'  It has to be < 1. For lambda < 0, lambda must be >= -theta/4.
-#' @param details show the detailed information of probability and cumulative probability.
-#'  Default is set as FALSE.
-#' @return quantile of the specified distribution if the parameter \emph{details} is set as FALSE.
-#'  quantile and the detailed information of probability and cumulative probability if
-#'  the parameter \emph{details} is set as TRUE.
+#'  It has to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.
+#' @param details index of whether to display the probabilities and cumulative probabilities.
+#'  Default is set to FALSE.
+#' @return quantile of the specified distribution if the parameter \emph{details} is set to FALSE, 
+#' detailed information of probabilities and cumulative probabilities otherwise.
 #' @examples
-#'  QuantileGpois(0.98,1,-0.2,details = TRUE)
-#'  QuantileGpois(0.80,2,0.025,details = FALSE)
+#'  QuantileGpois(0.98, 1, -0.2, details = TRUE)
+#'  QuantileGpois(0.80, 2, 0.025, details = FALSE)
 #' @references
 #'  Demirtas, H. (2017). On accurate and precise generation of generalized
 #'  Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
 #'   \bold{46(1)}, 489-499.
 #' @export
-QuantileGpois = function(p, theta, lambda, details = FALSE){
+QuantileGpois = function(p, theta, lambda, details = FALSE) {
   # Check if parameters are valid
-  if(theta <= 0) stop("Theta has to be greater than 0!")
-  if(lambda > 1) stop("Lambda has to be less than 1!")
+  if(theta <= 0) stop("theta has to be greater than 0!")
+  if(lambda > 1) stop("lambda has to be less than 1!")
 
   # since m >= 4, check lower bound for lambda when labda is negative
-  if (lambda < 0 & lambda < (-theta)/4) stop (paste("For lambda<0, lambda must be >= -theta/4 = ", (-theta)/4, "!", sep=""))
+  if (lambda < 0 & lambda < (-theta)/4) stop(paste("For lambda < 0, lambda must be greater than or equal -theta/4, which is ", (-theta)/4, "!", sep=""))
+  
+  # p should be between 0 and 1
+    if (max(p) > 1 | min(p) < 0) stop("p should be between 0 and 1!")
   
   # Determine m
   m = numeric(1)
@@ -45,25 +47,22 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
   p = exp(-theta)
   # s is for cumulative probability
   s[1] = p
-  if (details) cat("x = 0, P(X = x) =",p, ",P(X <= x) =", s[1], "\n")
-  i=1
-  s[1] = as.numeric(p)
-  if (details) cat("x = 0, P(X = x) =",p , ", P(X <= x) =", s[1], "\n")
+  if (details) cat(paste0("x = 0, P(X = x) = ", round(p, 7), ", P(X <= x) = ", round(s[1], 7), "\n"))
   i = 1
   while (s[i] < upper) {
     #P(X = x)
     if (lambda < 0 & i > m) break
     else{
-      p = theta * (theta + lambda * i)^(i - 1) * exp(-theta-lambda*i) / factorial(i)
-      if(is.infinite(p)) {cat("error: p goes to infinite", "\n"); break  }
+      p = theta * (theta + lambda * i)^(i - 1) * exp(-theta-lambda * i) / factorial(i)
       if (i == 10000) {
         temp = numeric(10000)
         s = c(s, temp)
       }
         s[i + 1] = s[i] + p
-        if (details) cat("x =", i, ", P(X = x) =", p, ", P(X <= x) =", s[i+1], "\n")
+        if (p == 0 | p == Inf) break
+        if (details) cat(paste0("x = ", i,", P(X = x) = ", round(p, 7), ", P(X <= x) = ", round(s[i+1], 7), "\n"))
         i=i+1
-     }
+    }
   }
   
   # For lambda < 0 to eliminate the truncation error ###
@@ -71,30 +70,21 @@ QuantileGpois = function(p, theta, lambda, details = FALSE){
     Fm = s[i]
     s[1:i] = s[1:i] * Fm^(-1)
     if (details){
-      cat("When lambda is negative, we need to account for truncation error\n")
-      cat("The adjusted CDF are:", s[1:i])
+      cat("When lambda is negative, we need to account for truncation error. ")
+      cat("The adjusted CDF are:", s[1:i], "\n")
     }
   }
   
   # quantile for x
-  if(!is.infinite(p)) {for (j in 1:length(p.in)) {
-    i = 1
-    while (p.in[j] > s[i]) {
-      i = i + 1
-    }
-    q[j] = i - 1
+  for (j in 1:length(p.in)) {
+  i = 1
+  while (p.in[j] > s[i]) {
+    if (s[i] == 0 | s[i] == Inf) break ### break the loop if s = 0 or s = Inf
+    i = i + 1
   }
-    return(q)
+  q[j] = i - 1
   }
-  else {
-    for (j in 1:length(p.in)) {
-      i = 1
-      while (p.in[j] > s[i]) {
-        i = i + 1
-      }
-      q[j] = i - 1
-    }
-    return(q)
-  }
+  if (s[i] == 0 | s[i] == Inf) return(q - 1)
+    else return(q)
 }
 
