@@ -16,10 +16,11 @@ It has to be less than 1. For lambda < 0, lambda must be greater than or equal t
 
 \item{details}{index to indicate whether to print out the estimates of parameters. Default is set to TRUE.}
 
-\item{method}{index to specify one of the five methods: "Inversion", "Branching", "Normal-Approximation", "Build-Up" or "Chop-Down".}
+\item{method}{index to specify one of the five methods for generating univariate GPD variable: 
+"Inversion", "Branching", "Normal-Approximation", "Build-Up" or "Chop-Down".}
 }
 \value{
-a list that includes generated data, specified and empirical values of theta and lambda, and the specified method.
+A list that includes generated data, specified and empirical values of theta and lambda, and the specified method.
 }
 \description{
 \code{GenUniGpois} generates univariate random variables from the generalized Poisson
@@ -32,11 +33,11 @@ All five methods come from Demirtas (2017).
  When theta is less than 10, the "Normal-Approximation" may not be reliable.
 }
 \examples{
- GenUniGpois(2, 0.9, 100, method = "Branching")
- GenUniGpois(5, -0.4, 100, method = "Inversion")
- GenUniGpois(12, 0.5, 100, method = "Normal-Approximation")
- data <- GenUniGpois(10, 0.4, 10, method = "Chop-Down", details = FALSE)
- data <- GenUniGpois(3, 0.9, 10000, method = "Build-Up", details = FALSE)
+GenUniGpois(5, -0.4, 100, method = "Inversion")
+GenUniGpois(2, 0.9, 100, method = "Branching")
+GenUniGpois(12, 0.5, 100, method = "Normal-Approximation")
+data <- GenUniGpois(3, 0.9, 10000, method = "Build-Up", details = FALSE)
+data <- GenUniGpois(10, 0.4, 10, method = "Chop-Down", details = FALSE)
 }
 \references{
 Demirtas, H. (2017). On accurate and precise generation of generalized

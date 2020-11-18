@@ -17,7 +17,7 @@ For lambda < 0, lambda must be greater than or equal to -theta/4.}
 \item{verbose}{logical variable that determines whether to display the traces. Default is set to TRUE.}
 }
 \value{
-lower and upper correlation bounds.
+Lower and upper correlation bounds.
 }
 \description{
 \code{ComputeCorrGpois} computes the lower and upper correlation bounds of pairwise

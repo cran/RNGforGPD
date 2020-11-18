@@ -16,8 +16,8 @@ This package is about generating univariate and multivariate data that follow th
 \details{
 \tabular{ll}{Package: \tab RNGforGPD\cr
              Type: \tab Package\cr
-             Version: \tab 1.0.3\cr
-             Date: \tab 2020-08-05\cr
+             Version: \tab 1.1.0\cr
+             Date: \tab 2020-11-17\cr
              License: \tab GPL-2 | GPL-3}
 }
 \references{
@@ -30,10 +30,10 @@ Amatya, A. and Demirtas, H. (2015). Simultaneous generation of multivariate mixe
  
  Demirtas, H. (2017). On accurate and precise generation of generalized
  Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
- \bold{46(1)}, 489-499.
+ \bold{46(1)}, 489-499. 
 
  Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds.
- \emph{The American Statistician}, \bold{65(2)}, 104-109.
+ \emph{The American Statistician}, \bold{65(2)}, 104-109. 
 
  Yahav, I. and Shmueli, G. (2012). On generating multivariate Poisson data in management science applications.
  \emph{Applied Stochastic Models in Business and Industry}, \bold{28(1)}, 91-102.

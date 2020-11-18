@@ -18,12 +18,12 @@ It has to be less than 1. For lambda < 0, lambda must be greater than or equal t
 Default is set to FALSE.}
 }
 \value{
-quantile of the specified distribution if the parameter \emph{details} is set to FALSE, 
+Quantile of the specified distribution if the parameter \emph{details} is set to FALSE, 
 detailed information of probabilities and cumulative probabilities otherwise.
 }
 \description{
 \code{QuantileGpois} computes the quantile for the generalized Poisson distribution
- for specified values of percentile, rate and dispersion parameters.
+ for specified values of percentile, rate, and dispersion parameters.
 }
 \examples{
  QuantileGpois(0.98, 1, -0.2, details = TRUE)
@@ -31,6 +31,6 @@ detailed information of probabilities and cumulative probabilities otherwise.
 }
 \references{
 Demirtas, H. (2017). On accurate and precise generation of generalized
- Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
-  \bold{46(1)}, 489-499.
+ Poisson variates. \emph{Communications in Statistics - Simulation and Computation}, 
+ \bold{46(1)}, 489-499.
 }

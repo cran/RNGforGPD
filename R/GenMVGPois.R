@@ -1,10 +1,3 @@
-#' @include QuantileGpois.R
-#' @importFrom mvtnorm rmvnorm
-#' @importFrom stats pnorm
-#' @import VGAM
-NULL
-
-
 #' Generates Data from Multivariate Generalized Poisson Distribution
 #'
 #' \code{GenMVGpois} simulates a sample of size \emph{sample.size} from a set of multivariate generalized
@@ -18,11 +11,11 @@ NULL
 #' @param lambda.vec dispersion parameters in the generalized Poisson distribution. It is assumed that the length
 #'  of the vector is at least two. All lambda values have to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.
 #' @param details index of whether to display the specified and empirical values of parameters. Default is set to TRUE.
-#' @return data that follow multivariate generalized Poisson distribution.
+#' @return Data that follow multivariate generalized Poisson distribution.
 #' @examples
 #' \donttest{
 #'  sample.size = 10000; no.gpois = 3
-#'  lambda.vec = c(0.2, 0.2, 0.3); theta.vec = c(1, 3, 4)
+#'  lambda.vec = c(-0.2, 0.2, -0.3); theta.vec = c(1, 3, 4)
 #'  M = c(0.352, 0.265, 0.342); N = diag(3); N[lower.tri(N)] = M
 #'  TV = N + t(N); diag(TV) = 1
 #'  cstar = CmatStarGpois(TV, theta.vec, lambda.vec, verbose = TRUE)
@@ -35,7 +28,7 @@ NULL
 #'  TV # specified correlation matrix}
 #' @references
 #'  Amatya, A. and Demirtas, H. (2015). Simultaneous generation of multivariate mixed data with Poisson
-#'  and normal marginals. \emph{Journal of Statistical Computation and Simulation}, \bold{85(15)}, 3129-3139.
+#'  and normal marginals. \emph{Journal of Statistical Computation and Simulation}, \bold{85(15)}, 3129-3139. 
 #'
 #'  Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with
 #'  Poisson and normal marginals. \emph{Communications in Statistics - Simulation and Computation},
@@ -70,20 +63,24 @@ GenMVGpois = function(sample.size, no.gpois, cmat.star, theta.vec, lambda.vec, d
   }
   colnames(YY) = NULL
   if (sample.size != 1) {
-    model = vglm(YY ~ 1, genpoisson(zero = 1))
-    coef = matrix(Coef(model), 2, no.gpois)
-    emp.theta = round(coef[2, ], 6)
-    emp.lambda = round(coef[1, ], 6)
+    emp.theta <- emp.lambda <- numeric(no.gpois)
+
+      for (i in 1:no.gpois){
+        params <- MOM.genpois(YY[, i])
+        emp.theta[i] = round(params$emp.theta, 6)
+        emp.lambda[i] = round(params$emp.lambda, 6)
+      }
+
     emp.corr = cor(YY)
     if (details == TRUE) {
       my.res = list(data = YY,
-                  specified.theta = theta.vec,
-                  empirical.theta = emp.theta,
-                  specified.lambda = lambda.vec,
-                  empirical.lambda = emp.lambda,
-                  specified.corr = cmat.star,
-                  empirical.corr = emp.corr)
-      print(my.res[2:6])
+                    specified.theta = theta.vec,
+                    empirical.theta = emp.theta,
+                    specified.lambda = lambda.vec,
+                    empirical.lambda = emp.lambda,
+                    specified.corr = cmat.star,
+                    empirical.corr = emp.corr)
+      print(my.res[2:7])
       return(my.res)
     }
   }

@@ -1,7 +1,7 @@
 #' Computes Quantiles
 #'
 #' \code{QuantileGpois} computes the quantile for the generalized Poisson distribution
-#'  for specified values of percentile, rate and dispersion parameters.
+#'  for specified values of percentile, rate, and dispersion parameters.
 #'
 #' @param p percentile of the generalized Poisson distribution, p should be between 0 and 1.
 #' @param theta the rate parameter in the generalized Poisson distribution. It has to be a positive number.
@@ -9,15 +9,15 @@
 #'  It has to be less than 1. For lambda < 0, lambda must be greater than or equal to -theta/4.
 #' @param details index of whether to display the probabilities and cumulative probabilities.
 #'  Default is set to FALSE.
-#' @return quantile of the specified distribution if the parameter \emph{details} is set to FALSE, 
+#' @return Quantile of the specified distribution if the parameter \emph{details} is set to FALSE, 
 #' detailed information of probabilities and cumulative probabilities otherwise.
 #' @examples
 #'  QuantileGpois(0.98, 1, -0.2, details = TRUE)
 #'  QuantileGpois(0.80, 2, 0.025, details = FALSE)
 #' @references
 #'  Demirtas, H. (2017). On accurate and precise generation of generalized
-#'  Poisson variates. \emph{Communications in Statistics - Simulation and Computation},
-#'   \bold{46(1)}, 489-499.
+#'  Poisson variates. \emph{Communications in Statistics - Simulation and Computation}, 
+#'  \bold{46(1)}, 489-499.
 #' @export
 QuantileGpois = function(p, theta, lambda, details = FALSE) {
   # Check if parameters are valid

@@ -19,12 +19,12 @@ For lambda < 0, lambda must be greater than or equal to -theta/4.}
 \item{verbose}{logical variable that determines whether to display the traces. Default is set to TRUE.}
 }
 \value{
-intermediate correlation matrix.
+Intermediate correlation matrix.
 }
 \description{
 \code{CmatStarGpois} computes an intermediate correlation matrix that will be used to obtain
 the target correlation matrix using the inverse CDF transformation method in \code{GenMVGpois}.
-If the intermediate correlation martrix is not positive definite, the nearest positive definite
+If the intermediate correlation matrix is not positive definite, the nearest positive definite
 matrix is used.
 }
 \examples{

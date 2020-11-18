@@ -27,7 +27,7 @@ NULL
 #'  \bold{46(3)}, 2241-2253.
 #'  
 #'  Demirtas, H. and Hedeker, D. (2011). A practical way for computing approximate lower and upper correlation bounds.
-#'  \emph{The American Statistician}, \bold{65(2)}, 104-109.
+#'  \emph{The American Statistician}, \bold{65(2)}, 104-109. 
 #' @export
 ValidCorrGpois = function (corMat, theta.vec, lambda.vec, verbose = TRUE) {
   no.gpois = length(theta.vec)

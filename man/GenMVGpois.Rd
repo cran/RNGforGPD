@@ -29,7 +29,7 @@ of the vector is at least two. All lambda values have to be less than 1. For lam
 \item{details}{index of whether to display the specified and empirical values of parameters. Default is set to TRUE.}
 }
 \value{
-data that follow multivariate generalized Poisson distribution.
+Data that follow multivariate generalized Poisson distribution.
 }
 \description{
 \code{GenMVGpois} simulates a sample of size \emph{sample.size} from a set of multivariate generalized
@@ -38,7 +38,7 @@ Poisson variables with correlation matrix \emph{cmat.star} and pre-specified mar
 \examples{
 \donttest{
  sample.size = 10000; no.gpois = 3
- lambda.vec = c(0.2, 0.2, 0.3); theta.vec = c(1, 3, 4)
+ lambda.vec = c(-0.2, 0.2, -0.3); theta.vec = c(1, 3, 4)
  M = c(0.352, 0.265, 0.342); N = diag(3); N[lower.tri(N)] = M
  TV = N + t(N); diag(TV) = 1
  cstar = CmatStarGpois(TV, theta.vec, lambda.vec, verbose = TRUE)
@@ -52,7 +52,7 @@ Poisson variables with correlation matrix \emph{cmat.star} and pre-specified mar
 }
 \references{
 Amatya, A. and Demirtas, H. (2015). Simultaneous generation of multivariate mixed data with Poisson
- and normal marginals. \emph{Journal of Statistical Computation and Simulation}, \bold{85(15)}, 3129-3139.
+ and normal marginals. \emph{Journal of Statistical Computation and Simulation}, \bold{85(15)}, 3129-3139. 
 
  Amatya, A. and Demirtas, H. (2017). PoisNor: An R package for generation of multivariate data with
  Poisson and normal marginals. \emph{Communications in Statistics - Simulation and Computation},

@@ -1,8 +1,3 @@
-#' @include GenUniGpois.R
-#' @importFrom stats cor
-NULL
-
-
 #' Computes the Lower and Upper Correlation Bounds
 #'
 #' \code{ComputeCorrGpois} computes the lower and upper correlation bounds of pairwise
@@ -15,7 +10,7 @@ NULL
 #'  of the vector is at least two. All lambda values have to be less than 1. 
 #'  For lambda < 0, lambda must be greater than or equal to -theta/4.
 #' @param verbose logical variable that determines whether to display the traces. Default is set to TRUE.
-#' @return lower and upper correlation bounds.
+#' @return Lower and upper correlation bounds.
 #' @examples
 #'  \donttest{
 #'  ComputeCorrGpois(c(3, 2, 5, 4), c(0.3, 0.2, 0.5, 0.6), verbose = TRUE)
